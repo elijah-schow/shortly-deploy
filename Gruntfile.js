@@ -21,15 +21,28 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      myTarget: {
+        files: {
+          'public/dist': ['public/client/**/*.js']
+        }
+      }
     },
 
     eslint: {
       target: [
-        // Add list of files to lint here
+        '*.js',
+        'app/**/*.js',
+        'public/client/**/*.js',
+        'test/**/*.js',
+        'views/**/*.js'
       ]
     },
 
     cssmin: {
+      myTarget: {
+        src: 'public/*.css',
+        dest: 'public/style.min.css'
+      }
     },
 
     watch: {
@@ -51,6 +64,7 @@ module.exports = function(grunt) {
 
     shell: {
       prodServer: {
+        command: 'git push server master'
       }
     },
   });
@@ -77,18 +91,24 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
+    'eslint',
+    'test',
+    'uglify',
+    'concat',
+    'cssmin'
   ]);
 
   grunt.registerTask('upload', function(n) {
     if (grunt.option('prod')) {
-      // add your production server task here
+      grunt.task.run(['shell']);
     } else {
       grunt.task.run([ 'server-dev' ]);
     }
   });
 
   grunt.registerTask('deploy', [
-    // add your deploy tasks here
+    'build',
+    'shell'
   ]);
 
 
